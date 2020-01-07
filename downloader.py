@@ -94,19 +94,19 @@ def get_code(session, url):
 
 def get_s1_post_form(code):
     return {
-        'BookingS1Form:hf:0': None,
-        'selectStartStation': 7,
-        'selectDestinationStation': 2,
+        'BookingS1Form:hf:0': None,  #這個不要動
+        'selectStartStation': 7, #起始站，每個站都有不同的編號
+        'selectDestinationStation': 2, #抵達站，每個站都有不同的編號
         'trainCon:trainRadioGroup': 0,
         'bookingMethod': 0,
-        'toTimeInputField': '2019/12/26',
-        'toTimeTable': '200P',
+        'toTimeInputField': '2019/12/26',  #去程票時間
+        'toTimeTable': '200P',   # 他Timetable的規律我還沒去看
         'toTrainIDInputField': None,
-        #'backTimeCheckBox': 'on',
-        'backTimeInputField': '2019/12/26',
-        'backTimeTable': '1130P',
+        #'backTimeCheckBox': 'on', # 如果要訂回程票 這個要on
+        'backTimeInputField': '2019/12/26', #回程票時間
+        'backTimeTable': '1130P', 
         'backTrainIDInputField': None,
-        'ticketPanel:rows:0:ticketAmount': '1F',
+        'ticketPanel:rows:0:ticketAmount': '1F', # F H W E P 分別有代表不同的族群，分別是成人票.... 其他我忘了
         'ticketPanel:rows:1:ticketAmount': '0H',
         'ticketPanel:rows:2:ticketAmount': '0W',
         'ticketPanel:rows:3:ticketAmount': '0E',
@@ -118,7 +118,7 @@ def get_s1_post_form(code):
 def get_s2_post_form(radio):
     return {
         'BookingS2Form:hf:0': None,
-        "TrainQueryDataViewPanel:TrainGroup": radio,
+        "TrainQueryDataViewPanel:TrainGroup": radio,  #車次表
         "SubmitButton": "確認車次"
     }
 
@@ -134,15 +134,15 @@ def post_test(session,url,r_url,form):
     return session.post(url,data=form)
 
 if __name__ == "__main__":
-    s = start_session()
-    r = s.get(init_url)
-    v,c,f = get_s1_component(init_url,r.text)
-    get_code(s, c)
-    get_voice(s, v)
-    code = input('code: ')
-    form = get_s1_post_form(code)
-    rp = post_test(s, f, r.url, form)
-    print('after s1: ',rp.url)
+    s = start_session() # session就把他先想像成瀏覽器開啟就好
+    r = s.get(init_url) # init_url是主頁面網址
+    v,c,f = get_s1_component(init_url,r.text)  #這個function是用來取得訂票第一個步驟所需要的原件
+    get_code(s, c) # 取得 驗證碼圖片
+    get_voice(s, v) # 取得 語音 
+    code = input('code: ') # 這裡可以把它取代成用 演算法 得出來的驗證碼字串
+    form = get_s1_post_form(code) # 這個是取得通過第一階段的表單 詳細你可以去看 get_s1_post_form，裡面照理說要依照每個人調整參數，例如你可能要訂的是2020/01/11的票
+    rp = post_test(s, f, r.url, form) # 這個是把上面拿到的表單上傳
+    print('after s1: ',rp.url) 
     f_u,v = get_s2_component(rp.url, rp.text)
     #print(rp.text)
     #print(f)
@@ -150,8 +150,8 @@ if __name__ == "__main__":
     form = get_s2_post_form(v[0]['value'])
     rpp = post_test(s, f_u, rp.url, form)
     print('after s2: ',rpp.url)
-    with open('test.html','w',encoding='utf-8') as f:
-        f.write(rpp.text)
+    with open('test.html','w',encoding='utf-8') as f: #這兩行是我用來抓HTML下來用檔案分析的 但我現在只有破解到第二階段 我明天要考大洞 QQ
+        f.write(rpp.text) #這兩行是我用來抓HTML下來用檔案分析的 但我現在只有破解到第二階段 我明天要考大洞 QQ
     
 """
 BookingS1Form:hf:0: 
