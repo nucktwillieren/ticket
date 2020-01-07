@@ -129,7 +129,7 @@ def post_test(session,url,r_url,form):
     session.headers.update({
         "Referer":r_url
     })
-    resp = session.post(url,data=form)
+    #resp = session.post(url,data=form)
     
     return session.post(url,data=form)
 
